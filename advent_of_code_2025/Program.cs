@@ -32,6 +32,9 @@ while (true)
         case 2:
             Day2.Run();
             break;
+        case 3:
+            Day3.Run();
+            break;
         default:
             break;
     }
