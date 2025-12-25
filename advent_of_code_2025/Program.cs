@@ -41,7 +41,11 @@ while (true)
         case 5:
             Day5.Run();
             break;
+        case 6:
+            Day6.Run();
+            break;
         default:
+            Console.WriteLine("Invalid day!\n");
             break;
     }
     
