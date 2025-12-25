@@ -62,8 +62,6 @@ public static class Day4
                 }
             }
         }
-        
-        
 
         return total;
     }
@@ -89,7 +87,6 @@ public static class Day4
             if (grid.ContainsKey(cardinal) && grid[cardinal] == '@')
                 tally++;
         }
-        
 
         return tally;
     }
