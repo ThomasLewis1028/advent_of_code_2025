@@ -45,6 +45,8 @@ public static class Day5
     {
         var index = 0;
         var aggregrated = true;
+        
+        ranges = ranges.OrderBy(x => x.low).ToList();
     
         while (aggregrated)
         {
@@ -53,43 +55,54 @@ public static class Day5
             for (var i = 0; i < ranges.Count; i++)
             {
                 var range = ranges[i];
-    
-                foreach (var range2 in ranges.Skip(i + 1))
+
+                for( var j = i + 1; j<ranges.Count; j++)
                 {
+                    var range2 = ranges[j];
                     (Int128 low, Int128 high) tempRange = new();
     
                     // Range is the original, Range2 is the future
                     
-                    // Low in
-                    if (range2.low >= range.low && range2.low <= range.high)
+                    // Low in, high in (3-6, 4-5)
+                    if (range2.low >= range.low  // Low in
+                        && range2.high <= range.high) // High in
                     {
-                        // High out
-                        if (range2.high >= range.high)
-                        {
-                            tempRange = (range.low, range2.high);
-                            ranges.Add(tempRange);
-                        }
-    
+                        // Remove 4-5 in this case
                         ranges.Remove(range2);
+                        j--;
                         aggregrated = true;
                     }
-                    // High in
-                    else if (range2.high <= range.high && range2.high >= range.low)
+                    // Low in, high out (3-6, 4-10)
+                    else if (range2.low >= range.low // Low in
+                             && range2.low <= range.high+1 // Low in
+                             && range2.high > range.high) // High out
                     {
-                        // Low out
-                        if (range2.low <= range.low)
-                        {
-                            tempRange = (range2.low, range.high);
-                            ranges.Add(tempRange);
-                        }
-    
+                        // Create a new range with low from original, high from new
+                        tempRange.low = range.low;
+                        tempRange.high = range2.high;
+                        
+                        // Remove both ranges as they've been merged
+                        ranges[i] = tempRange;
                         ranges.Remove(range2);
+                        j--;
+                        
+                        range = tempRange;
                         aggregrated = true;
                     }
-                    // High out, low out, encompassing
-                    else if (range2.high >= range.high && range2.low <= range.low)
+                    // Low out, high in (4-8, 2-5)
+                    else if (range2.low <= range.low // Low out
+                             && range2.high <= range.high // High in
+                             && range2.high >= range.low-1) // High in
                     {
-                        ranges.Remove(range);
+                        // Create a new range with high from original, low from new
+                        tempRange.low = range2.low;
+                        tempRange.high = range.high;
+                        
+                        ranges[i] = tempRange;
+                        ranges.Remove(range2);
+                        j--;
+                        
+                        range = tempRange;
                         aggregrated = true;
                     }
                     // High out, low out, non-encompassing
@@ -100,6 +113,8 @@ public static class Day5
                 }
             }
         }
+
+        ranges = ranges.OrderBy(x => x.low).ToList();
     
         Int128 sum = 0;
     
